@@ -1,0 +1,24 @@
+body
+{
+background-color:#73CCE6;
+color:black;
+}
+button :hover
+{
+opacity:0.4;
+}
+h1 :hover
+{
+opacity:0.4;
+}
+#first
+{
+font-family:rockmaker;
+vertical-align:middle;
+font-size:40px;
+}
+hr
+{
+width:100%;
+color:black;
+}

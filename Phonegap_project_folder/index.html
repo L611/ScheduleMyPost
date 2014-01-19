@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+ <html>
+  <head>
+	<link rel="stylesheet" type="text/css" href="./css/mystyle.css">
+   <title> ScheduleMyPost </title>
+   <script type="text/javascript" src="js/jquery.min.js">   </script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#first').hide().fadeIn('slow').delay(2500).fadeOut('medium');
+});
+	$(document).ready(function() {
+  $('#second').hide().delay(3500).fadeIn(1000);
+});
+
+function myFunction() 
+{ var x = navigator.onLine; 
+if(x){ window.open("http://web.iiit.ac.in/~ayush.mishra/ScheduleMyPost"); } 
+else { window.open('./offline.html'); } } 
+
+</script>
+
+ <style>
+	
+		#first {
+		
+		text-align:center;
+		}
+ 
+	@font-face{
+		font-family: karisma;
+		src: url('fonts/karisma.ttf');
+	}
+
+	@font-face{
+		font-family: rockmaker;
+		src: url('fonts/rockmaker.ttf');
+	}
+
+	@font-face{
+		font-family: mistress;
+		src: url('fonts/mistress.ttf');
+	}
+	.header{
+		font-size:40px;
+		font-family:rockmaker;	
+	}
+	p {
+		font-family:mistress;
+	}
+
+	button {
+		font-family: karisma;
+		font-size:25px;
+		padding:8px;
+	}
+	button:hover {
+		font-weight:bold;
+	}
+
+	
+   </style> 
+  </head>   
+  <body>
+  <center>
+	<div id="first">
+	<center> <br> <br> <br> <br> <br>
+	ScheduleMyPost<hr>
+	</center>
+	</div>
+	<div id="second">
+   
+    <h1 class="header"> ScheduleMyPost<hr></h1>
+    <p>An app to schedule facebook posts to post later! </p>
+    <br>
+     <img src="image2.png" width="100px" /> <br>
+     <button href="http://web.iiit.ac.in/~ayush.mishra/ScheduleMyPost" onclick="myFunction()"> Use With Facebook </button>
+    <div id="footer">
+     <p> Click on the button above and give permissions to merge this app with your facebook account </p>
+    </div>
+	     <button href="howto.html"> How to use this app? </button>
+   
+   </div>
+</center>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<?php 
+	date_default_timezone_set('Asia/Calcutta');
+$access_token = $facebook->getAccessToken();
+
+if ($_GET[see]) {
+		$connection = mysqli_connect($host,$username,$password,$database);
+		$query = "SELECT * from samplescheduled_tasks where fid=$user and posted = 0";
+		$result = mysqli_query($connection, $query);
+		$num = 1;
+
+?>
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>
+   Scheduled Posts
+   </title>
+   <style>
+	tr:hover {
+		background-color:#eeeeee;
+
+	}
+td{
+    text-align:center; 
+    vertical-align:middle;
+    padding:5px;
+        }
+    .width{
+	width:100px;
+
+}
+
+   </style>
+ </head>
+ <body style="background-color:rgb(115,204,230);">
+<center>
+       <a href="http://web.iiit.ac.in/~ayush.mishra/ScheduleMyPost"> <button style="background-color:rgb(40,162,230); width:280px; height:48px;font-size:23px; box-shadow:3px 5px 8px 2px;"> Schedule another Post </button> </a>
+<br>
+<br><br><br>
+	<table style="border:1px solid black; padding:10px; width:350px; box-shadow:2px 3px 6px 1px;  background-color: lightyellow; border-collapse:collapse; border-radius:7px;">
+	<tr> <th> <u>No. </u></th> <th><u> Message</u> </th> <th> <u>Time</u> </th> <th><u> Date</u> </th> </tr>
+</center>
+ </body>
+</html>
+<?php
+	while($row = mysqli_fetch_assoc($result)) { 
+
+		echo "<tr>";
+		echo "<td > $num </td>";
+		echo "<td style='width:100px'> $row[message] </td>";
+		echo "<td > $row[hours]:$row[minutes] </td>";
+		echo "<td > $row[date]-$row[month]-$row[year] </td>";
+	
+		echo "</tr>";
+		$num++;
+	}
+	echo "</table>";
+?>
+
+
+<?php
+} else {
+
+	$connection = mysqli_connect($host,$username,$password,$database);
+	$query = "SELECT * from sampleusers WHERE fid=\"$user\"";
+	//echo $query."\n";
+	$query_result = mysqli_query ($connection, $query);
+	$rows = mysqli_num_rows($query_result);
+	//echo $rows;
+	if($rows == 0) /* USER using app for the first time */ {
+	//need to insert the access_token
+	 $query = "INSERT INTO sampleusers VALUES($user,\"$access_token\");";
+	// echo $query;
+	 mysqli_query ($connection, $query);
+ 
+}
+
+	else /*User has used before */ {
+
+	// need to update the access_token
+	// echo "row already exists \n";
+	 $query = "UPDATE sampleusers SET access_token=\"$access_token\" WHERE fid = $user;";
+	 mysqli_query($connection,$query);
+	// echo "access_token updated\n";
+
+	}
+	mysqli_close($connection);
+
+	if($_POST[message]) {
+
+		$stringtime = $_POST['year']."-".$_POST['month']."-".$_POST['date']." ".$_POST['hours'].":".$_POST['minutes'].":00";
+		$stringtime = strtotime($stringtime);
+		//echo $stringtime;
+
+		if($stringtime > time()) {
+
+
+
+		$connection = mysqli_connect($host,$username,$password,$database);
+		$query = "INSERT into samplescheduled_tasks(fid,message,month,date,year,hours,minutes,posted) VALUES($user,\"$_POST[message]\",$_POST[month],$_POST[date],$_POST[year],$_POST[hours],$_POST[minutes],0);";
+		//echo $query;
+		$result = mysqli_query($connection,$query);
+		if($result) $posted = 1;
+		}
+		else {
+			$posted = 2;
+
+		}
+	}
+
+
+
+?>
+
+<!DOCTYPE html>
+ <html>
+  <head>
+   <title>
+   ScheduleMyApp
+   </title>
+   <style> td#dt { padding:10px; text-align:center; } button { padding:10px; } </style>
+   <script>
+	time = 0	
+     function update() {
+	document.getElementById('umonth').innerHTML =  document.getElementById('month').value
+	document.getElementById('udate').innerHTML =  document.getElementById('date').value	
+	document.getElementById('uyear').innerHTML =  document.getElementById('year').value
+	document.getElementById('uhours').innerHTML =  document.getElementById('hours').value
+	document.getElementById('uminutes').innerHTML =  document.getElementById('minutes').value
+	time++;
+     }
+ 
+     window.setInterval(function(){
+     update();
+     if(time > 20) {
+	document.getElementById('posted').innerHTML = "";
+	document.getElementById('posted').style.border = "0px solid black";
+     }
+     }, 100);
+
+   </script>
+  </head>
+  <body style="background-color:rgb(115,204,230);"> 
+<center>
+
+    <span id="posted" style="position:fixed; top:5px;left:15px;  padding:10px; color:red;"><?php if($posted == 1) echo "Sheduled!"; if($posted == 2) echo "Error occured";  ?></span> <br>    Welcome, <strong> <?php print_r($facebook->api('/me?fields=id,name')[name]); ?> </strong>
+    <img src="https://graph.facebook.com/<?php echo $user; ?>/picture" style="float:right;position:relative;">
+    <br> <br><br>
+    <table> <td style="text-align:center;">
+    <div id='datetime'> 	
+	<table style="border:1px solid black;padding:10px;background-color:rgb(92,164,184); width:300px; box-shadow:2px 3px 6px 1px;border-radius:7px; "> <tr> <td id='dt'> Time </td> <td id='dt'> Date </td> </tr> <tr>
+        <td> <span id="uhours">08</span>:<span id="uminutes">60</span>  </td>
+	<td> <span id="udate">5</span>-<span id="umonth">5</span>-<span id="uyear">2014</span> </td> </tr> </table> 
+	<br> 
+    </div> </td> </table>
+<form method="POST" action=".">
+    <table>
+     <tr>
+      <td style="padding-right:30px"> Date </td>
+      <td> <input id="date" name="date" type="range" min="1" max="31" value="<?php date_default_timezone_set('Asia/Calcutta'); echo date('d'); ?>" style="width:200px;"/> </td>
+     </tr>
+     <tr>
+      <td style="padding-right:30px"> Month </td>
+      <td> <input id="month" name="month" type="range" min="1" max="12" value="<?php date_default_timezone_set('Asia/Calcutta'); echo date('m'); ?>" style="width:200px;"/> </td>
+     </tr>
+     <tr>
+      <td style="padding-right:30px"> Year </td>
+      <td> <input id="year" name="year" type="range" min="2014" max="2015" value="<?php date_default_timezone_set('Asia/Calcutta'); echo date('Y'); ?>" style="width:200px;"/> </td>
+     </tr>
+     <tr>
+      <td style="padding-right:30px"> Hours </td>
+      <td> <input id="hours" name="hours" type="range" min="0" max="23" value="00" style="width:200px;"/> </td>
+     </tr>
+     <tr>
+      <td style="padding-right:30px"> Minutes </td>
+      <td> <input id="minutes" name="minutes" type="range" min="0" max="59" value="00" style="width:200px;"/> </td>
+     </tr>
+    </table>
+    <br> 
+
+
+
+     <table><tr><td><textarea name="message" id="message" style="width:230px; height:40px;" placeholder="What's on your mind?"> </textarea> </td> <td> <input type="submit" value="Schedule">  </input> </td></tr></table><br>  
+     </form>
+
+  <a href=".?see=1"> <button style="background-color:rgb(40,162,230); width:320px; height:48px;font-size:23px; box-shadow:3px 5px 8px 2px;"> Show  Scheduled  Posts </button> </a>
+    	
+</center>
+  </body>
+ </html>
+<?php } ?>

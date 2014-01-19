@@ -1,0 +1,25 @@
+<?php
+
+$connection = mysqli_connect("localhost","user","","test");
+$query = "SELECT * from samplescheduled_tasks";
+$result = mysqli_query($connection,$query);
+
+while($row=mysqli_fetch_assoc($result)) {
+	
+	$current_timestamp = time();
+	$string = "$row[year]-$row[month]-$row[date] $row[hours]:$row[minutes]:00";
+	$timestamp = strtotime($string);
+	echo $timestamp."\n";
+
+	if($timestamp - $current_timestamp < 120) {
+
+		$query = "UPDATE samplescheduled_tasks SET posted=1 WHERE sno=$row[sno];"
+		mysqli_query($connection,$query);
+
+	}
+	
+}
+
+mysqli_close($connection,$result);
+
+?>
